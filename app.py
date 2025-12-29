@@ -15,6 +15,16 @@ tavily_api_key = os.environ.get("TAVILY_API_KEY")
 client = Groq(api_key=groq_api_key)
 tavily = TavilyClient(api_key=tavily_api_key)
 
+# --- MODELS PRIORITY LIST ---
+# 1. llama-3.3-70b-versatile (Newest, but sometimes errors)
+# 2. llama-3.1-8b-instant    (Fastest, very stable)
+# 3. mixtral-8x7b-32768      (Old reliable backup)
+MODELS_TO_TRY = [
+    "llama-3.3-70b-versatile",
+    "llama-3.1-8b-instant",
+    "mixtral-8x7b-32768"
+]
+
 @app.route('/')
 def home():
     try:
@@ -38,19 +48,19 @@ def ask_ai():
     if not user_question:
         return "Error: No question provided."
 
-    # 1. Simplified Tool Definition
+    # 1. Simplified Tool Definition (Optimized to prevent Error 400)
     tools = [
         {
             "type": "function",
             "function": {
                 "name": "web_search",
-                "description": "Find current information about news, weather, or real-time facts.",
+                "description": "Get live information about news, weather, or facts.",
                 "parameters": {
                     "type": "object",
                     "properties": {
                         "query": {
                             "type": "string",
-                            "description": "The topic to search for",
+                            "description": "The topic to search",
                         }
                     },
                     "required": ["query"],
@@ -59,71 +69,81 @@ def ask_ai():
         }
     ]
 
-    try:
-        # 2. System Prompt
-        messages = [
-            {
-                "role": "system", 
-                "content": (
-                    "You are Elara, created by Gk Gutte. "
-                    "If the user asks about current events (news, weather, crypto prices), you MUST use the 'web_search' tool. "
-                    "Do not answer from memory for live data."
-                )
-            },
-            {
-                "role": "user", 
-                "content": user_question
-            }
-        ]
+    # 2. System Prompt
+    messages = [
+        {
+            "role": "system", 
+            "content": (
+                "You are Elara, created by Gk Gutte. "
+                "If the user asks for live info (news, weather, crypto), use the 'web_search' tool. "
+                "Otherwise answer directly."
+            )
+        },
+        {
+            "role": "user", 
+            "content": user_question
+        }
+    ]
 
-        # 3. Call Groq using the NEW SUPPORTED MODEL
-        response = client.chat.completions.create(
-            messages=messages,
-            model="llama-3.3-70b-versatile", # <--- UPDATED MODEL
-            tools=tools,
-            tool_choice="auto",
-        )
+    # 3. ROBUST LOOP (Catches Error 400 and Switches Models)
+    last_error = ""
+    
+    for model in MODELS_TO_TRY:
+        try:
+            print(f"LOG: Attempting with model: {model}")
+            
+            # Call Groq
+            response = client.chat.completions.create(
+                messages=messages,
+                model=model,
+                tools=tools,
+                tool_choice="auto",
+            )
 
-        response_message = response.choices[0].message
-        tool_calls = response_message.tool_calls
+            response_message = response.choices[0].message
+            tool_calls = response_message.tool_calls
 
-        # 4. Handle Search if requested
-        if tool_calls:
-            print("LOG: AI is searching...")
-            available_functions = {"web_search": get_web_search}
-            messages.append(response_message) 
+            # Handle Search
+            if tool_calls:
+                print(f"LOG: {model} requested search.")
+                available_functions = {"web_search": get_web_search}
+                messages.append(response_message) 
 
-            for tool_call in tool_calls:
-                function_name = tool_call.function.name
-                function_to_call = available_functions[function_name]
-                function_args = json.loads(tool_call.function.arguments)
-                
-                search_results = function_to_call(query=function_args.get("query"))
-                
-                messages.append(
-                    {
+                for tool_call in tool_calls:
+                    function_name = tool_call.function.name
+                    function_to_call = available_functions[function_name]
+                    function_args = json.loads(tool_call.function.arguments)
+                    search_results = function_to_call(query=function_args.get("query"))
+                    
+                    messages.append({
                         "tool_call_id": tool_call.id,
                         "role": "tool",
                         "name": function_name,
                         "content": search_results,
-                    }
+                    })
+
+                # Final Answer (Must use same model)
+                final_response = client.chat.completions.create(
+                    model=model,
+                    messages=messages
                 )
+                return final_response.choices[0].message.content
 
-            # Final response after search
-            final_response = client.chat.completions.create(
-                model="llama-3.3-70b-versatile", # <--- UPDATED MODEL
-                messages=messages
-            )
-            return final_response.choices[0].message.content
+            else:
+                # No search needed
+                return response_message.content
 
-        else:
-            return response_message.content
+        except Exception as e:
+            # THIS IS THE KEY FIX:
+            # Instead of crashing, we print the error and TRY THE NEXT MODEL
+            print(f"LOG: Model {model} failed with error: {e}")
+            last_error = str(e)
+            continue 
 
-    except Exception as e:
-        print(f"API Error: {e}")
-        return f"I encountered an error: {str(e)}"
+    # If ALL 3 models fail
+    return f"System currently busy. Please try again. (Debug: {last_error})"
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 10000))
     app.run(host='0.0.0.0', port=port)
-    
+        
