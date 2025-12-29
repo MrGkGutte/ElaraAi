@@ -8,11 +8,10 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
-# --- API Keys Setup ---
+# --- API Keys ---
 groq_api_key = os.environ.get("GROQ_API_KEY")
 tavily_api_key = os.environ.get("TAVILY_API_KEY")
 
-# Initialize Clients
 client = Groq(api_key=groq_api_key)
 tavily = TavilyClient(api_key=tavily_api_key)
 
@@ -23,40 +22,36 @@ def home():
     except:
         return "Smart Mobile API is Running!"
 
-# --- Helper Function: Web Search ---
+# --- Helper: Web Search ---
 def get_web_search(query):
-    print(f"LOG: Running web search for: {query}")  # Log for debugging
+    print(f"LOG: Searching for: {query}")
     try:
-        # Search specifically for accurate news/info
+        # 'q' is often safer than 'query' for some clients, but Tavily uses 'query'
         response = tavily.search(query=query, search_depth="basic", max_results=3)
-        
-        # Format the results cleanly
         context = "\n".join([f"- {obj['content']}" for obj in response['results']])
         return context
     except Exception as e:
-        print(f"LOG: Search Error: {e}")
-        return f"Error: {str(e)}"
+        return f"Search Error: {str(e)}"
 
 @app.route('/api/ask', methods=['GET'])
 def ask_ai():
     user_question = request.args.get('text')
-    
     if not user_question:
         return "Error: No question provided."
 
-    # 1. Define the Tool
+    # 1. Simplified Tool Definition (Easier for AI to understand)
     tools = [
         {
             "type": "function",
             "function": {
                 "name": "web_search",
-                "description": "Find live information about news, weather, sports, stocks, or recent events.",
+                "description": "Search the internet for current events, news, weather, or facts.",
                 "parameters": {
                     "type": "object",
                     "properties": {
                         "query": {
                             "type": "string",
-                            "description": "The search keywords (e.g. 'weather in Delhi', 'Bitcoin price')",
+                            "description": "The search term",
                         }
                     },
                     "required": ["query"],
@@ -66,23 +61,27 @@ def ask_ai():
     ]
 
     try:
-        # 2. Stronger System Prompt
-        system_prompt = (
-            "You are Elara, created by Gk Gutte. "
-            "CRITICAL INSTRUCTION: If the user asks about ANY current event, weather, news, sports, "
-            "or dynamic info (like stock prices), you MUST use the 'web_search' tool. "
-            "Do not guess. Do not use your internal memory for facts that change."
-        )
-
+        # 2. System Prompt
         messages = [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_question}
+            {
+                "role": "system", 
+                "content": (
+                    "You are Elara, created by Gk Gutte. "
+                    "If the user asks about current events, weather, or real-time info, call the 'web_search' function. "
+                    "Otherwise, answer normally."
+                )
+            },
+            {
+                "role": "user", 
+                "content": user_question
+            }
         ]
 
-        # 3. Call Groq (Using the SMARTER Model: llama-3.3-70b-versatile)
+        # 3. Call Groq using the STABLE model (llama-3.1-70b-versatile)
+        # This version is much less likely to crash with Error 400
         response = client.chat.completions.create(
             messages=messages,
-            model="llama-3.3-70b-versatile", # <--- CHANGED to 70B for better intelligence
+            model="llama-3.1-70b-versatile",
             tools=tools,
             tool_choice="auto",
         )
@@ -90,9 +89,9 @@ def ask_ai():
         response_message = response.choices[0].message
         tool_calls = response_message.tool_calls
 
-        # 4. Check if AI wants to search
+        # 4. Handle Search if requested
         if tool_calls:
-            print("LOG: AI decided to search.")
+            print("LOG: AI is searching...")
             available_functions = {"web_search": get_web_search}
             messages.append(response_message) 
 
@@ -101,10 +100,8 @@ def ask_ai():
                 function_to_call = available_functions[function_name]
                 function_args = json.loads(tool_call.function.arguments)
                 
-                # Perform the search
                 search_results = function_to_call(query=function_args.get("query"))
                 
-                # Give results back to AI
                 messages.append(
                     {
                         "tool_call_id": tool_call.id,
@@ -114,21 +111,23 @@ def ask_ai():
                     }
                 )
 
-            # 5. Final Answer with search data
+            # Final response after search
             final_response = client.chat.completions.create(
-                model="llama-3.3-70b-versatile", # <--- CHANGED to 70B
+                model="llama-3.1-70b-versatile",
                 messages=messages
             )
             return final_response.choices[0].message.content
 
         else:
-            print("LOG: AI decided NOT to search.")
+            # No search needed
             return response_message.content
 
     except Exception as e:
-        return f"Error: {str(e)}"
+        # If it still crashes, return the error clearly so we see it
+        print(f"API Error: {e}")
+        return f"I encountered an error: {str(e)}"
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 10000))
     app.run(host='0.0.0.0', port=port)
-        
+    
