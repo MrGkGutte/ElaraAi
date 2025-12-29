@@ -1,149 +1,126 @@
-from flask import Flask, request, render_template
 import os
-import json
+from flask import Flask, render_template, request, jsonify, session
+from flask_cors import CORS  # <--- IMPORT THIS
 from groq import Groq
 from tavily import TavilyClient
-from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app)
+CORS(app)  # <--- ENABLE CORS FOR ALL ROUTES
 
-# --- API Keys ---
-groq_api_key = os.environ.get("GROQ_API_KEY")
-tavily_api_key = os.environ.get("TAVILY_API_KEY")
+# A secret key is required for sessions.
+app.secret_key = os.urandom(24)
 
-client = Groq(api_key=groq_api_key)
-tavily = TavilyClient(api_key=tavily_api_key)
-
-# --- MODELS PRIORITY LIST ---
-# 1. llama-3.3-70b-versatile (Newest, but sometimes errors)
-# 2. llama-3.1-8b-instant    (Fastest, very stable)
-# 3. mixtral-8x7b-32768      (Old reliable backup)
-MODELS_TO_TRY = [
-    "llama-3.3-70b-versatile",
-    "llama-3.1-8b-instant",
-    "mixtral-8x7b-32768"
-]
+# --- HELPER: SMART SEARCH ROUTER ---
+def check_if_search_needed(prompt, client):
+    """
+    Uses a fast/small model to decide if the user prompt requires a web search.
+    """
+    try:
+        system_instruction = """
+        You are a search router. Analyze the user's query.
+        Return 'YES' if the query requires external real-time information (news, weather, sports, specific facts, current events).
+        Return 'NO' if the query is conversational, generic, creative writing, code generation, or about your identity ("Who are you").
+        Reply ONLY with 'YES' or 'NO'.
+        """
+        
+        response = client.chat.completions.create(
+            model="llama-3.1-8b-instant", # Use fast model for decision
+            messages=[
+                {"role": "system", "content": system_instruction},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0,
+            max_tokens=5
+        )
+        decision = response.choices[0].message.content.strip().upper()
+        return "YES" in decision
+    except:
+        return False
 
 @app.route('/')
 def home():
+    if 'messages' not in session:
+        session['messages'] = []
+    return render_template('index.html', messages=session['messages'])
+
+@app.route('/clear_chat', methods=['POST'])
+def clear_chat():
+    session['messages'] = []
+    return jsonify({"status": "success"})
+
+@app.route('/chat', methods=['POST'])
+def chat():
+    data = request.json
+    user_input = data.get('message')
+    groq_api_key = data.get('groq_api_key')
+    tavily_api_key = data.get('tavily_api_key')
+    model_option = data.get('model_option', 'llama-3.3-70b-versatile')
+    use_search = data.get('use_search', False)
+
+    if not groq_api_key:
+        return jsonify({"error": "Groq API Key is missing."}), 400
+
+    # Add User Message to Session
+    session['messages'].append({"role": "user", "content": user_input})
+    session.modified = True
+
     try:
-        return render_template('index.html')
-    except:
-        return "Smart Mobile API is Running!"
+        client = Groq(api_key=groq_api_key)
+        
+        # --- SMART SEARCH LOGIC ---
+        search_context = ""
+        should_search = False
+        search_results_display = None
 
-# --- Helper: Web Search ---
-def get_web_search(query):
-    print(f"LOG: Searching for: {query}")
-    try:
-        response = tavily.search(query=query, search_depth="basic", max_results=3)
-        context = "\n".join([f"- {obj['content']}" for obj in response['results']])
-        return context
-    except Exception as e:
-        return f"Search Error: {str(e)}"
-
-@app.route('/api/ask', methods=['GET'])
-def ask_ai():
-    user_question = request.args.get('text')
-    if not user_question:
-        return "Error: No question provided."
-
-    # 1. Simplified Tool Definition (Optimized to prevent Error 400)
-    tools = [
-        {
-            "type": "function",
-            "function": {
-                "name": "web_search",
-                "description": "Get live information about news, weather, or facts.",
-                "parameters": {
-                    "type": "object",
-                    "properties": {
-                        "query": {
-                            "type": "string",
-                            "description": "The topic to search",
-                        }
-                    },
-                    "required": ["query"],
-                },
-            },
-        }
-    ]
-
-    # 2. System Prompt
-    messages = [
-        {
-            "role": "system", 
-            "content": (
-                "You are Elara, created by Gk Gutte. "
-                "If the user asks for live info (news, weather, crypto), use the 'web_search' tool. "
-                "Otherwise answer directly."
-            )
-        },
-        {
-            "role": "user", 
-            "content": user_question
-        }
-    ]
-
-    # 3. ROBUST LOOP (Catches Error 400 and Switches Models)
-    last_error = ""
-    
-    for model in MODELS_TO_TRY:
-        try:
-            print(f"LOG: Attempting with model: {model}")
+        if use_search and tavily_api_key:
+            should_search = check_if_search_needed(user_input, client)
             
-            # Call Groq
-            response = client.chat.completions.create(
-                messages=messages,
-                model=model,
-                tools=tools,
-                tool_choice="auto",
-            )
+            if should_search:
+                try:
+                    tavily = TavilyClient(api_key=tavily_api_key)
+                    search_result = tavily.search(query=user_input, search_depth="basic", max_results=3)
+                    snippets = [f"Source: {res['url']}\nContent: {res['content']}" for res in search_result['results']]
+                    search_context = "\n\n".join(snippets)
+                    search_results_display = search_result['results']
+                except Exception as e:
+                    print(f"Search failed: {e}")
 
-            response_message = response.choices[0].message
-            tool_calls = response_message.tool_calls
+        # --- PREPARE PROMPT ---
+        system_content = "You are Elara, a helpful and smart AI assistant created by Gk Gutte. Always introduce yourself as Elara when asked."
+        
+        if search_context:
+            system_content += f"""
+            \n\nLIVE WEB CONTEXT:\n{search_context}
+            \n\nINSTRUCTION: Answer the user's question using the context above.
+            """
+        else:
+            system_content += "\n\nINSTRUCTION: Answer the user's question based on your training data."
 
-            # Handle Search
-            if tool_calls:
-                print(f"LOG: {model} requested search.")
-                available_functions = {"web_search": get_web_search}
-                messages.append(response_message) 
+        messages_for_api = [{"role": "system", "content": system_content}]
+        messages_for_api.extend(session['messages'])
 
-                for tool_call in tool_calls:
-                    function_name = tool_call.function.name
-                    function_to_call = available_functions[function_name]
-                    function_args = json.loads(tool_call.function.arguments)
-                    search_results = function_to_call(query=function_args.get("query"))
-                    
-                    messages.append({
-                        "tool_call_id": tool_call.id,
-                        "role": "tool",
-                        "name": function_name,
-                        "content": search_results,
-                    })
+        # --- CALL GROQ API ---
+        completion = client.chat.completions.create(
+            model=model_option,
+            messages=messages_for_api,
+            stream=False 
+        )
+        
+        ai_response = completion.choices[0].message.content
+        
+        # Add AI Message to Session
+        session['messages'].append({"role": "assistant", "content": ai_response})
+        session.modified = True
 
-                # Final Answer (Must use same model)
-                final_response = client.chat.completions.create(
-                    model=model,
-                    messages=messages
-                )
-                return final_response.choices[0].message.content
+        return jsonify({
+            "response": ai_response, 
+            "search_results": search_results_display,
+            "searched": should_search
+        })
 
-            else:
-                # No search needed
-                return response_message.content
-
-        except Exception as e:
-            # THIS IS THE KEY FIX:
-            # Instead of crashing, we print the error and TRY THE NEXT MODEL
-            print(f"LOG: Model {model} failed with error: {e}")
-            last_error = str(e)
-            continue 
-
-    # If ALL 3 models fail
-    return f"System currently busy. Please try again. (Debug: {last_error})"
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 10000))
-    app.run(host='0.0.0.0', port=port)
-        
+    app.run(debug=True)
+    
