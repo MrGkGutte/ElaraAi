@@ -1,30 +1,25 @@
 import os
 from flask import Flask, render_template, request, jsonify, session
-from flask_cors import CORS  # <--- IMPORT THIS
+from flask_cors import CORS
 from groq import Groq
 from tavily import TavilyClient
 
 app = Flask(__name__)
-CORS(app)  # <--- ENABLE CORS FOR ALL ROUTES
+CORS(app) 
 
-# A secret key is required for sessions.
 app.secret_key = os.urandom(24)
 
 # --- HELPER: SMART SEARCH ROUTER ---
 def check_if_search_needed(prompt, client):
-    """
-    Uses a fast/small model to decide if the user prompt requires a web search.
-    """
     try:
         system_instruction = """
         You are a search router. Analyze the user's query.
-        Return 'YES' if the query requires external real-time information (news, weather, sports, specific facts, current events).
-        Return 'NO' if the query is conversational, generic, creative writing, code generation, or about your identity ("Who are you").
+        Return 'YES' if the query requires external real-time information.
+        Return 'NO' if the query is conversational or generic.
         Reply ONLY with 'YES' or 'NO'.
         """
-        
         response = client.chat.completions.create(
-            model="llama-3.1-8b-instant", # Use fast model for decision
+            model="llama-3.1-8b-instant",
             messages=[
                 {"role": "system", "content": system_instruction},
                 {"role": "user", "content": prompt}
@@ -32,8 +27,7 @@ def check_if_search_needed(prompt, client):
             temperature=0,
             max_tokens=5
         )
-        decision = response.choices[0].message.content.strip().upper()
-        return "YES" in decision
+        return "YES" in response.choices[0].message.content.strip().upper()
     except:
         return False
 
@@ -52,29 +46,30 @@ def clear_chat():
 def chat():
     data = request.json
     user_input = data.get('message')
-    groq_api_key = data.get('groq_api_key')
-    tavily_api_key = data.get('tavily_api_key')
+    
+    # --- CHANGED: Check Frontend Input first, then Environment Variables ---
+    groq_api_key = data.get('groq_api_key') or os.environ.get('GROQ_API_KEY')
+    tavily_api_key = data.get('tavily_api_key') or os.environ.get('TAVILY_API_KEY')
+    
     model_option = data.get('model_option', 'llama-3.3-70b-versatile')
     use_search = data.get('use_search', False)
 
+    # Validation: If both sources fail, return error
     if not groq_api_key:
-        return jsonify({"error": "Groq API Key is missing."}), 400
+        return jsonify({"error": "Groq API Key is missing. Please set GROQ_API_KEY in environment or enter it in the sidebar."}), 400
 
-    # Add User Message to Session
     session['messages'].append({"role": "user", "content": user_input})
     session.modified = True
 
     try:
         client = Groq(api_key=groq_api_key)
         
-        # --- SMART SEARCH LOGIC ---
         search_context = ""
         should_search = False
         search_results_display = None
 
         if use_search and tavily_api_key:
             should_search = check_if_search_needed(user_input, client)
-            
             if should_search:
                 try:
                     tavily = TavilyClient(api_key=tavily_api_key)
@@ -85,21 +80,15 @@ def chat():
                 except Exception as e:
                     print(f"Search failed: {e}")
 
-        # --- PREPARE PROMPT ---
         system_content = "You are Elara, a helpful and smart AI assistant created by Gk Gutte. Always introduce yourself as Elara when asked."
-        
         if search_context:
-            system_content += f"""
-            \n\nLIVE WEB CONTEXT:\n{search_context}
-            \n\nINSTRUCTION: Answer the user's question using the context above.
-            """
+            system_content += f"\n\nLIVE WEB CONTEXT:\n{search_context}\n\nINSTRUCTION: Answer using the context above."
         else:
-            system_content += "\n\nINSTRUCTION: Answer the user's question based on your training data."
+            system_content += "\n\nINSTRUCTION: Answer based on your training data."
 
         messages_for_api = [{"role": "system", "content": system_content}]
         messages_for_api.extend(session['messages'])
 
-        # --- CALL GROQ API ---
         completion = client.chat.completions.create(
             model=model_option,
             messages=messages_for_api,
@@ -107,8 +96,6 @@ def chat():
         )
         
         ai_response = completion.choices[0].message.content
-        
-        # Add AI Message to Session
         session['messages'].append({"role": "assistant", "content": ai_response})
         session.modified = True
 
@@ -123,4 +110,3 @@ def chat():
 
 if __name__ == '__main__':
     app.run(debug=True)
-    
