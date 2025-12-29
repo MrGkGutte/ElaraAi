@@ -1,6 +1,5 @@
 flask
 groq
-gunicorn
 tavily-python
 flask-cors
 
