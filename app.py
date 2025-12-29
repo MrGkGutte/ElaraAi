@@ -7,6 +7,7 @@ from tavily import TavilyClient
 app = Flask(__name__)
 CORS(app) 
 
+# Secure secret key
 app.secret_key = os.urandom(24)
 
 # --- HELPER: SMART SEARCH ROUTER ---
@@ -47,16 +48,15 @@ def chat():
     data = request.json
     user_input = data.get('message')
     
-    # --- CHANGED: Check Frontend Input first, then Environment Variables ---
+    # 1. Try to get keys from Frontend, otherwise check Server Environment Variables
     groq_api_key = data.get('groq_api_key') or os.environ.get('GROQ_API_KEY')
     tavily_api_key = data.get('tavily_api_key') or os.environ.get('TAVILY_API_KEY')
     
     model_option = data.get('model_option', 'llama-3.3-70b-versatile')
     use_search = data.get('use_search', False)
 
-    # Validation: If both sources fail, return error
     if not groq_api_key:
-        return jsonify({"error": "Groq API Key is missing. Please set GROQ_API_KEY in environment or enter it in the sidebar."}), 400
+        return jsonify({"error": "Groq API Key is missing. Please set GROQ_API_KEY in Render Environment Variables."}), 400
 
     session['messages'].append({"role": "user", "content": user_input})
     session.modified = True
@@ -108,5 +108,8 @@ def chat():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+# --- CRITICAL FIX FOR RENDER DEPLOYMENT ---
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 10000))  # Get port from Render, default to 10000
+    app.run(host='0.0.0.0', port=port)         # Listen on 0.0.0.0 (Public)
+    
