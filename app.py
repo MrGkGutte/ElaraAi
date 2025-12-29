@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, render_template
 import os
 import json
 from groq import Groq
@@ -26,7 +26,6 @@ def home():
 def get_web_search(query):
     print(f"LOG: Searching for: {query}")
     try:
-        # 'q' is often safer than 'query' for some clients, but Tavily uses 'query'
         response = tavily.search(query=query, search_depth="basic", max_results=3)
         context = "\n".join([f"- {obj['content']}" for obj in response['results']])
         return context
@@ -39,19 +38,19 @@ def ask_ai():
     if not user_question:
         return "Error: No question provided."
 
-    # 1. Simplified Tool Definition (Easier for AI to understand)
+    # 1. Simplified Tool Definition
     tools = [
         {
             "type": "function",
             "function": {
                 "name": "web_search",
-                "description": "Search the internet for current events, news, weather, or facts.",
+                "description": "Find current information about news, weather, or real-time facts.",
                 "parameters": {
                     "type": "object",
                     "properties": {
                         "query": {
                             "type": "string",
-                            "description": "The search term",
+                            "description": "The topic to search for",
                         }
                     },
                     "required": ["query"],
@@ -67,8 +66,8 @@ def ask_ai():
                 "role": "system", 
                 "content": (
                     "You are Elara, created by Gk Gutte. "
-                    "If the user asks about current events, weather, or real-time info, call the 'web_search' function. "
-                    "Otherwise, answer normally."
+                    "If the user asks about current events (news, weather, crypto prices), you MUST use the 'web_search' tool. "
+                    "Do not answer from memory for live data."
                 )
             },
             {
@@ -77,11 +76,10 @@ def ask_ai():
             }
         ]
 
-        # 3. Call Groq using the STABLE model (llama-3.1-70b-versatile)
-        # This version is much less likely to crash with Error 400
+        # 3. Call Groq using the NEW SUPPORTED MODEL
         response = client.chat.completions.create(
             messages=messages,
-            model="llama-3.1-70b-versatile",
+            model="llama-3.3-70b-versatile", # <--- UPDATED MODEL
             tools=tools,
             tool_choice="auto",
         )
@@ -113,17 +111,15 @@ def ask_ai():
 
             # Final response after search
             final_response = client.chat.completions.create(
-                model="llama-3.1-70b-versatile",
+                model="llama-3.3-70b-versatile", # <--- UPDATED MODEL
                 messages=messages
             )
             return final_response.choices[0].message.content
 
         else:
-            # No search needed
             return response_message.content
 
     except Exception as e:
-        # If it still crashes, return the error clearly so we see it
         print(f"API Error: {e}")
         return f"I encountered an error: {str(e)}"
 
