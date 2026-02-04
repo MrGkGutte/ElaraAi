@@ -4,106 +4,142 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <title>Ask Lawyer - Free Indian Legal Advice AI | Draft Legal Notices</title>
-    <meta name="description" content="Ask Lawyer (asklawyer.in) provides free instant legal advice on Indian laws (BNS, IPC, Consumer Act). Draft legal notices and emails professionally with our AI expert.">
-    <meta name="keywords" content="Ask Lawyer, Indian Law AI, Legal Advice India, Free Legal Drafting, Consumer Court Help, Gahininath Gutte, Legal AI India">
+    <title>Ask Lawyer - Free Indian Legal Advice AI | Legal Notices & Drafting</title>
+    <meta name="description" content="Get expert legal guidance on Indian Law. Ask Lawyer AI helps with Consumer Court, FIR, Rent disputes, and legal drafting. Secure, fast, and free legal help.">
+    <meta name="keywords" content="Ask Lawyer, Indian Law AI, Legal Advice India, Free Legal Drafting, Consumer Court Help, Gahininath Gutte, AdSense Legal Site">
     <meta name="author" content="Gahininath Gutte">
-    <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://asklawyer.in/" />
-
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "LegalService",
-      "name": "Ask Lawyer",
-      "description": "AI-powered legal assistant for Indian Law and Document Drafting.",
-      "url": "https://asklawyer.in",
-      "author": {
-        "@type": "Person",
-        "name": "Gahininath Gutte"
-      }
-    }
-    </script>
 
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
-        :root { --primary: #1a365d; --accent: #c05621; --bg: #f7fafc; }
-        body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); margin: 0; padding-bottom: 120px; color: #2d3748; }
+        :root { --primary: #1a365d; --accent: #c05621; --bg: #f8fafc; --white: #ffffff; }
+        body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); margin: 0; color: #1a202c; scroll-behavior: smooth; }
         
-        .top-header { background: white; border-bottom: 3px solid var(--primary); padding: 15px 20px; position: fixed; top: 0; width: 100%; z-index: 1000; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .logo { font-weight: 800; color: var(--primary); font-size: 1.6rem; text-decoration: none; }
+        /* Navigation */
+        .top-header { background: var(--white); border-bottom: 3px solid var(--primary); padding: 10px 20px; position: fixed; top: 0; width: 100%; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .nav-container { max-width: 1000px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-weight: 800; color: var(--primary); font-size: 1.5rem; text-decoration: none; }
+        .nav-links a { text-decoration: none; color: var(--primary); font-weight: 600; font-size: 14px; margin-left: 20px; transition: 0.3s; }
+        .nav-links a:hover { color: var(--accent); }
+
+        .main-container { margin-top: 80px; padding: 20px; max-width: 900px; margin-inline: auto; }
+
+        /* Hero Section */
+        .hero { text-align: center; padding: 40px 0; }
+        .hero h1 { font-size: 2.5rem; color: var(--primary); margin-bottom: 10px; }
         
-        .main-container { margin-top: 100px; padding: 20px; max-width: 850px; margin-inline: auto; }
-        
-        .chat-box { display: flex; flex-direction: column; gap: 20px; }
-        .message { padding: 18px; border-radius: 12px; line-height: 1.6; background: white; border: 1px solid #e2e8f0; }
+        /* Chat Area */
+        .chat-box { display: flex; flex-direction: column; gap: 20px; margin-bottom: 40px; }
+        .message { padding: 20px; border-radius: 15px; line-height: 1.8; background: var(--white); border: 1px solid #e2e8f0; }
         .user-message { align-self: flex-end; background: var(--primary); color: white; border-bottom-right-radius: 0; max-width: 80%; }
-        .ai-message { align-self: flex-start; border-bottom-left-radius: 0; width: 100%; }
+        .ai-message { align-self: flex-start; border-bottom-left-radius: 0; width: 100%; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
         
-        .message-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px; padding-top: 10px; border-top: 1px solid #edf2f7; }
-        .action-btn { background: #ffffff; border: 1px solid #dadce0; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; }
-        .action-btn:hover { background: var(--primary); color: white; }
+        /* Action Buttons */
+        .message-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px; padding-top: 15px; border-top: 1px solid #edf2f7; }
+        .action-btn { background: var(--white); border: 1px solid #cbd5e0; padding: 8px 16px; border-radius: 25px; font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+        .action-btn:hover { background: var(--primary); color: white; border-color: var(--primary); }
 
-        .section-card { background: white; padding: 25px; border-radius: 12px; margin-top: 40px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        h2 { color: var(--primary); border-bottom: 2px solid var(--accent); display: inline-block; padding-bottom: 5px; }
+        /* Content Sections for AdSense */
+        .content-card { background: var(--white); padding: 35px; border-radius: 16px; margin-top: 30px; border: 1px solid #e2e8f0; }
+        h2 { color: var(--primary); border-left: 5px solid var(--accent); padding-left: 15px; margin-bottom: 20px; }
+        p, li { line-height: 1.8; color: #4a5568; }
 
-        .input-area { position: fixed; bottom: 0; width: 100%; background: white; padding: 20px; border-top: 1px solid #e2e8f0; }
-        .input-wrapper { max-width: 850px; margin: 0 auto; display: flex; gap: 10px; }
-        input { flex: 1; padding: 14px 25px; border-radius: 30px; border: 1px solid #cbd5e0; outline: none; font-size: 1rem; }
-        button#send { background: var(--primary); color: white; border: none; width: 50px; height: 50px; border-radius: 50%; cursor: pointer; }
-        
-        .typing { display: none; font-size: 14px; color: #a0aec0; margin-bottom: 10px; font-style: italic; }
-        footer { text-align: center; padding: 40px; color: #718096; font-size: 13px; }
+        /* Input Area */
+        .input-area { position: fixed; bottom: 0; width: 100%; background: var(--white); padding: 20px; border-top: 1px solid #e2e8f0; z-index: 999; }
+        .input-wrapper { max-width: 900px; margin: 0 auto; display: flex; gap: 12px; }
+        input { flex: 1; padding: 15px 25px; border-radius: 35px; border: 1px solid #cbd5e0; outline: none; font-size: 1rem; transition: 0.3s; }
+        input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(26, 54, 93, 0.1); }
+        button#send { background: var(--primary); color: white; border: none; width: 55px; height: 55px; border-radius: 50%; cursor: pointer; font-size: 1.3rem; transition: 0.3s; }
+        button#send:hover { transform: scale(1.05); background: #2c5282; }
+
+        footer { text-align: center; padding: 60px 20px 150px; background: #1a202c; color: #a0aec0; margin-top: 50px; }
+        footer a { color: #fff; text-decoration: none; margin: 0 10px; }
     </style>
 </head>
 <body>
 
     <header class="top-header">
-        <a href="/" class="logo">⚖️ Ask Lawyer</a>
+        <div class="nav-container">
+            <a href="/" class="logo">⚖️ Ask Lawyer</a>
+            <nav class="nav-links">
+                <a href="#about">About</a>
+                <a href="#services">Services</a>
+                <a href="#privacy">Privacy</a>
+                <a href="#contact">Contact</a>
+            </nav>
+        </div>
     </header>
 
     <div class="main-container">
+        <section class="hero">
+            <h1>Ask lawyer</h1>
+            <p>a lawyer in your pocket।</p>
+        </section>
+
         <div id="chat-box" class="chat-box">
             <div class="message ai-message">
-                नमस्ते! मैं <b>Ask Lawyer</b> हूँ। मैं भारतीय कानूनों को समझने और आपके लिए कानूनी नोटिस ड्राफ्ट करने में मदद करूँगा। आप अपनी समस्या यहाँ लिख सकते हैं।
+                स्वागत है! मैं <b>Ask Lawyer</b> हूँ। मैं आपको भारतीय कानूनों (BNS, IPC, Consumer Act) के बारे में जानकारी दे सकता हूँ और लीगल ड्राफ्ट तैयार करने में मदद कर सकता हूँ।<br><br>
+                <b>आप मुझसे पूछ सकते हैं:</b> "How to file a consumer complaint?" या "Draft a rent notice."
             </div>
         </div>
-        <div id="typing" class="typing">Ask Lawyer is analyzing legal data...</div>
+        <div id="typing" style="display:none; color: #718096; margin-bottom: 20px; font-style: italic;">Ask Lawyer is analyzing IPC/BNS sections...</div>
 
-        <div class="section-card" id="about">
-            <h2>About Us</h2>
-            <p>Welcome to <b>Ask Lawyer</b> (asklawyer.in), India's premier AI-driven legal companion. Founded by <b>Gahininath Gutte</b>, our mission is to make legal knowledge accessible to every Indian citizen. Whether you are dealing with consumer disputes, rent issues, or need guidance on FIR processes, our AI provides instant, reliable information based on the latest Indian laws (BNS, IPC, and Consumer Protection Act).</p>
+        <div class="content-card" id="services">
+            <h2>Our Legal Services</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                <div>
+                    <h4>📜 Document Drafting</h4>
+                    <p>Get AI-powered drafts for Legal Notices, Rental Agreements, and Professional Emails.</p>
+                </div>
+                <div>
+                    <h4>🛡️ Consumer Rights</h4>
+                    <p>Understand your rights under the Consumer Protection Act 2019 and how to claim refunds.</p>
+                </div>
+                <div>
+                    <h4>🚨 FIR & Police Help</h4>
+                    <p>Know the process of filing an FIR, Zero FIR, and your rights during police investigations.</p>
+                </div>
+            </div>
         </div>
 
-        <div class="section-card" id="privacy">
-            <h2>Privacy Policy</h2>
-            <p>At Ask Lawyer, we prioritize your data security. 
-                <ul>
-                    <li>हम आपकी निजी जानकारी को कभी भी तीसरे पक्ष (Third Parties) के साथ साझा नहीं करते हैं।</li>
-                    <li>आपकी चैट का उपयोग केवल AI द्वारा बेहतर कानूनी मार्गदर्शन प्रदान करने के लिए किया जाता है।</li>
-                    <li>हम आपकी गोपनीयता सुनिश्चित करने के लिए SSL एन्क्रिप्शन का उपयोग करते हैं।</li>
-                </ul>
-            </p>
+        <div class="content-card" id="about">
+            <h2>About Ask Lawyer (asklawyer.in)</h2>
+            <p><b>Ask Lawyer</b> is a social-legal initiative developed by <b>Gahininath Gutte</b>. In a country like India where legal literacy is low, our AI tool provides instant guidance to common citizens. We simplify complex legal jargon into understandable language (Hinglish) to empower you legally.</p>
         </div>
 
-        <div class="section-card">
-            <h2>Disclaimer</h2>
-            <p style="font-size: 0.9rem;">The information provided by <b>Ask Lawyer</b> is generated by Artificial Intelligence for educational and informational purposes only. It is NOT a substitute for professional legal advice from a qualified advocate. We do not guarantee the accuracy of AI-generated drafts for court proceedings. Please consult a licensed legal professional before taking any legal action.</p>
+        <div class="content-card" id="privacy">
+            <h2>Privacy & Terms of Service</h2>
+            <p>We take your privacy seriously. All interactions with our AI are encrypted. We do not store personal identifiers.
+            <br><br><b>Terms:</b> This tool provides information, not professional legal advice. Users are advised to verify information with a registered advocate before court submission.</p>
+        </div>
+
+        <div class="content-card" id="contact">
+            <h2>Contact Us</h2>
+            <p>Have questions or suggestions? Reach out to us at:<br>
+            <b>Email:</b> gkgutte143@yahoo.in<br>
+            <b>Location:</b> Maharashtra, India</p>
         </div>
 
         <footer>
-            © 2026 Ask Lawyer | Developed by Gahininath Gutte | <a href="https://asklawyer.in">asklawyer.in</a>
+            <p>© 2026 Ask Lawyer | Created by Gahininath Gutte</p>
+            <p>
+                <a href="#">Home</a> | 
+                <a href="#about">About Us</a> | 
+                <a href="#privacy">Privacy Policy</a> | 
+                <a href="#contact">Contact</a>
+            </p>
         </footer>
     </div>
 
     <div class="input-area">
         <div class="input-wrapper">
-            <input type="text" id="user-input" placeholder="Ask your legal question here..." onkeypress="if(event.key==='Enter') sendMessage()">
+            <input type="text" id="user-input" placeholder="Enter your legal query here..." onkeypress="if(event.key==='Enter') sendMessage()">
             <button id="send" onclick="sendMessage()">➤</button>
         </div>
     </div>
 
 <script>
+    // ... (Same sendMessage, addMessage, and downloadPDF functions as before) ...
     async function sendMessage() {
         const input = document.getElementById("user-input");
         const text = input.value.trim();
@@ -116,7 +152,7 @@
             const res = await fetch("/chat", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ message: text, session_id: "ask_lawyer_session" })
+                body: JSON.stringify({ message: text, session_id: "adsense_user" })
             });
             const data = await res.json();
             document.getElementById("typing").style.display = "none";
@@ -130,40 +166,32 @@
     function addMessage(text, className) {
         const div = document.createElement("div");
         div.classList.add("message", className);
-        
         if(className === 'ai-message') {
             div.innerHTML = marked.parse(text);
             const isDraft = text.toLowerCase().includes('subject:') || text.toLowerCase().includes('to:');
-
             if (isDraft) {
                 const actions = document.createElement("div");
                 actions.className = "message-actions";
-                
                 const copy = document.createElement("button");
                 copy.className = "action-btn";
                 copy.innerHTML = "📋 Copy Draft";
                 copy.onclick = () => {
                     let textToCopy = text;
                     const startIndex = text.toLowerCase().indexOf("subject:");
-                    if (startIndex !== -1) { 
-                        textToCopy = text.substring(startIndex).split('?')[0]; 
-                    }
+                    if (startIndex !== -1) { textToCopy = text.substring(startIndex).split('?')[0]; }
                     navigator.clipboard.writeText(textToCopy);
                     copy.innerHTML = "✅ Copied";
                     setTimeout(() => copy.innerHTML = "📋 Copy Draft", 2000);
                 };
-
                 const pdf = document.createElement("button");
                 pdf.className = "action-btn";
-                pdf.innerHTML = "📄 Download PDF";
+                pdf.innerHTML = "📄 PDF";
                 pdf.onclick = () => downloadPDF(text);
-
                 actions.appendChild(copy);
                 actions.appendChild(pdf);
                 div.appendChild(actions);
             }
         } else { div.textContent = text; }
-
         document.getElementById("chat-box").appendChild(div);
         window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
     }
