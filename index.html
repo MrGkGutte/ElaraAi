@@ -1,42 +1,104 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi-IN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pocket Lawyer</title>
+    
+    <title>Ask Lawyer - Free Indian Legal Advice AI | Draft Legal Notices</title>
+    <meta name="description" content="Ask Lawyer (asklawyer.in) provides free instant legal advice on Indian laws (BNS, IPC, Consumer Act). Draft legal notices and emails professionally with our AI expert.">
+    <meta name="keywords" content="Ask Lawyer, Indian Law AI, Legal Advice India, Free Legal Drafting, Consumer Court Help, Gahininath Gutte, Legal AI India">
+    <meta name="author" content="Gahininath Gutte">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://asklawyer.in/" />
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LegalService",
+      "name": "Ask Lawyer",
+      "description": "AI-powered legal assistant for Indian Law and Document Drafting.",
+      "url": "https://asklawyer.in",
+      "author": {
+        "@type": "Person",
+        "name": "Gahininath Gutte"
+      }
+    }
+    </script>
+
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         :root { --primary: #1a365d; --accent: #c05621; --bg: #f7fafc; }
-        body { font-family: system-ui, sans-serif; background: var(--bg); margin: 0; padding-bottom: 100px; }
-        .top-header { background: white; border-bottom: 2px solid var(--primary); padding: 15px 20px; position: fixed; top: 0; width: 100%; z-index: 1000; font-weight: 800; color: var(--primary); }
-        .main-container { margin-top: 80px; padding: 20px; max-width: 800px; margin-inline: auto; }
+        body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); margin: 0; padding-bottom: 120px; color: #2d3748; }
+        
+        .top-header { background: white; border-bottom: 3px solid var(--primary); padding: 15px 20px; position: fixed; top: 0; width: 100%; z-index: 1000; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .logo { font-weight: 800; color: var(--primary); font-size: 1.6rem; text-decoration: none; }
+        
+        .main-container { margin-top: 100px; padding: 20px; max-width: 850px; margin-inline: auto; }
+        
         .chat-box { display: flex; flex-direction: column; gap: 20px; }
-        .message { padding: 15px; border-radius: 12px; line-height: 1.6; background: white; border: 1px solid #e2e8f0; }
-        .user-message { align-self: flex-end; background: var(--primary); color: white; border-bottom-right-radius: 0; }
+        .message { padding: 18px; border-radius: 12px; line-height: 1.6; background: white; border: 1px solid #e2e8f0; }
+        .user-message { align-self: flex-end; background: var(--primary); color: white; border-bottom-right-radius: 0; max-width: 80%; }
         .ai-message { align-self: flex-start; border-bottom-left-radius: 0; width: 100%; }
         
-        /* Action Box - Right Aligned */
-        .message-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px; padding-top: 10px; border-top: 1px solid #f1f5f9; }
-        .action-btn { background: #f8fafc; border: 1px solid #e2e8f0; padding: 6px 12px; border-radius: 6px; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 5px; }
-        .action-btn:hover { background: #edf2f7; color: var(--primary); }
+        .message-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px; padding-top: 10px; border-top: 1px solid #edf2f7; }
+        .action-btn { background: #ffffff; border: 1px solid #dadce0; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; }
+        .action-btn:hover { background: var(--primary); color: white; }
 
-        .input-area { position: fixed; bottom: 0; width: 100%; background: white; padding: 15px; border-top: 1px solid #e2e8f0; }
-        .input-wrapper { max-width: 800px; margin: 0 auto; display: flex; gap: 10px; }
-        input { flex: 1; padding: 12px 20px; border-radius: 25px; border: 1px solid #cbd5e0; outline: none; }
-        button#send { background: var(--primary); color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; }
+        .section-card { background: white; padding: 25px; border-radius: 12px; margin-top: 40px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        h2 { color: var(--primary); border-bottom: 2px solid var(--accent); display: inline-block; padding-bottom: 5px; }
+
+        .input-area { position: fixed; bottom: 0; width: 100%; background: white; padding: 20px; border-top: 1px solid #e2e8f0; }
+        .input-wrapper { max-width: 850px; margin: 0 auto; display: flex; gap: 10px; }
+        input { flex: 1; padding: 14px 25px; border-radius: 30px; border: 1px solid #cbd5e0; outline: none; font-size: 1rem; }
+        button#send { background: var(--primary); color: white; border: none; width: 50px; height: 50px; border-radius: 50%; cursor: pointer; }
         
-        .typing { display: none; font-size: 14px; color: #718096; margin: 10px 0; }
+        .typing { display: none; font-size: 14px; color: #a0aec0; margin-bottom: 10px; font-style: italic; }
+        footer { text-align: center; padding: 40px; color: #718096; font-size: 13px; }
     </style>
 </head>
 <body>
-    <header class="top-header">⚖️ Pocket Lawyer</header>
+
+    <header class="top-header">
+        <a href="/" class="logo">⚖️ Ask Lawyer</a>
+    </header>
+
     <div class="main-container">
-        <div id="chat-box" class="chat-box"></div>
-        <div id="typing" class="typing">पॉकेट लॉयर सोच रहा है...</div>
+        <div id="chat-box" class="chat-box">
+            <div class="message ai-message">
+                नमस्ते! मैं <b>Ask Lawyer</b> हूँ। मैं भारतीय कानूनों को समझने और आपके लिए कानूनी नोटिस ड्राफ्ट करने में मदद करूँगा। आप अपनी समस्या यहाँ लिख सकते हैं।
+            </div>
+        </div>
+        <div id="typing" class="typing">Ask Lawyer is analyzing legal data...</div>
+
+        <div class="section-card" id="about">
+            <h2>About Us</h2>
+            <p>Welcome to <b>Ask Lawyer</b> (asklawyer.in), India's premier AI-driven legal companion. Founded by <b>Gahininath Gutte</b>, our mission is to make legal knowledge accessible to every Indian citizen. Whether you are dealing with consumer disputes, rent issues, or need guidance on FIR processes, our AI provides instant, reliable information based on the latest Indian laws (BNS, IPC, and Consumer Protection Act).</p>
+        </div>
+
+        <div class="section-card" id="privacy">
+            <h2>Privacy Policy</h2>
+            <p>At Ask Lawyer, we prioritize your data security. 
+                <ul>
+                    <li>हम आपकी निजी जानकारी को कभी भी तीसरे पक्ष (Third Parties) के साथ साझा नहीं करते हैं।</li>
+                    <li>आपकी चैट का उपयोग केवल AI द्वारा बेहतर कानूनी मार्गदर्शन प्रदान करने के लिए किया जाता है।</li>
+                    <li>हम आपकी गोपनीयता सुनिश्चित करने के लिए SSL एन्क्रिप्शन का उपयोग करते हैं।</li>
+                </ul>
+            </p>
+        </div>
+
+        <div class="section-card">
+            <h2>Disclaimer</h2>
+            <p style="font-size: 0.9rem;">The information provided by <b>Ask Lawyer</b> is generated by Artificial Intelligence for educational and informational purposes only. It is NOT a substitute for professional legal advice from a qualified advocate. We do not guarantee the accuracy of AI-generated drafts for court proceedings. Please consult a licensed legal professional before taking any legal action.</p>
+        </div>
+
+        <footer>
+            © 2026 Ask Lawyer | Developed by Gahininath Gutte | <a href="https://asklawyer.in">asklawyer.in</a>
+        </footer>
     </div>
+
     <div class="input-area">
         <div class="input-wrapper">
-            <input type="text" id="user-input" placeholder="अपनी समस्या यहाँ लिखें..." onkeypress="if(event.key==='Enter') sendMessage()">
+            <input type="text" id="user-input" placeholder="Ask your legal question here..." onkeypress="if(event.key==='Enter') sendMessage()">
             <button id="send" onclick="sendMessage()">➤</button>
         </div>
     </div>
@@ -50,14 +112,19 @@
         input.value = "";
         document.getElementById("typing").style.display = "block";
 
-        const res = await fetch("/chat", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ message: text, session_id: "user1" })
-        });
-        const data = await res.json();
-        document.getElementById("typing").style.display = "none";
-        addMessage(data.reply, "ai-message");
+        try {
+            const res = await fetch("/chat", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message: text, session_id: "ask_lawyer_session" })
+            });
+            const data = await res.json();
+            document.getElementById("typing").style.display = "none";
+            addMessage(data.reply, "ai-message");
+        } catch(e) {
+            document.getElementById("typing").style.display = "none";
+            addMessage("Server issue. Please try again.", "ai-message");
+        }
     }
 
     function addMessage(text, className) {
@@ -66,11 +133,7 @@
         
         if(className === 'ai-message') {
             div.innerHTML = marked.parse(text);
-            
-            // Smart Check: Only show buttons for formal drafts/notices
-            const isDraft = text.toLowerCase().includes('subject:') || 
-                            text.toLowerCase().includes('to:') || 
-                            text.toLowerCase().includes('dear');
+            const isDraft = text.toLowerCase().includes('subject:') || text.toLowerCase().includes('to:');
 
             if (isDraft) {
                 const actions = document.createElement("div");
@@ -78,16 +141,21 @@
                 
                 const copy = document.createElement("button");
                 copy.className = "action-btn";
-                copy.innerHTML = "📋 Copy";
+                copy.innerHTML = "📋 Copy Draft";
                 copy.onclick = () => {
-                    navigator.clipboard.writeText(text);
+                    let textToCopy = text;
+                    const startIndex = text.toLowerCase().indexOf("subject:");
+                    if (startIndex !== -1) { 
+                        textToCopy = text.substring(startIndex).split('?')[0]; 
+                    }
+                    navigator.clipboard.writeText(textToCopy);
                     copy.innerHTML = "✅ Copied";
-                    setTimeout(() => copy.innerHTML = "📋 Copy", 2000);
+                    setTimeout(() => copy.innerHTML = "📋 Copy Draft", 2000);
                 };
 
                 const pdf = document.createElement("button");
                 pdf.className = "action-btn";
-                pdf.innerHTML = "📄 PDF";
+                pdf.innerHTML = "📄 Download PDF";
                 pdf.onclick = () => downloadPDF(text);
 
                 actions.appendChild(copy);
@@ -109,7 +177,7 @@
         const blob = await res.blob();
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
-        a.href = url; a.download = 'Pocket_Lawyer_Draft.pdf';
+        a.href = url; a.download = 'AskLawyer_Draft.pdf';
         a.click();
     }
 </script>
