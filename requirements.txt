@@ -1,8 +1,7 @@
 flask
+flask-cors
 groq
 tavily-python
-flask-cors
+pytz
+fpdf
 gunicorn
-
-
-
