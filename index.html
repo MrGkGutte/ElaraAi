@@ -22,14 +22,14 @@
         .nav-links a { text-decoration: none; color: var(--primary); font-weight: 600; font-size: 14px; margin-left: 20px; transition: 0.3s; }
         .nav-links a:hover { color: var(--accent); }
 
-        .main-container { margin-top: 80px; padding: 20px; max-width: 900px; margin-inline: auto; padding-bottom: 100px; }
+        .main-container { margin-top: 80px; padding: 20px; max-width: 900px; margin-inline: auto; }
 
         /* Hero Section */
-        .hero { text-align: center; padding: 40px 0; }
+        .hero { text-align: center; padding: 40px 0 20px 0; }
         .hero h1 { font-size: 2.5rem; color: var(--primary); margin-bottom: 10px; }
         
         /* Chat Area */
-        .chat-box { display: flex; flex-direction: column; gap: 20px; margin-bottom: 20px; min-height: 200px; }
+        .chat-box { display: flex; flex-direction: column; gap: 20px; margin-bottom: 40px; }
         .message { padding: 20px; border-radius: 15px; line-height: 1.8; background: var(--white); border: 1px solid #e2e8f0; }
         .user-message { align-self: flex-end; background: var(--primary); color: white; border-bottom-right-radius: 0; max-width: 80%; }
         .ai-message { align-self: flex-start; border-bottom-left-radius: 0; width: 100%; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
@@ -39,7 +39,7 @@
         .action-btn { background: var(--white); border: 1px solid #cbd5e0; padding: 8px 16px; border-radius: 25px; font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.2s; }
         .action-btn:hover { background: var(--primary); color: white; border-color: var(--primary); }
 
-        /* Content Sections for AdSense */
+        /* Content Sections */
         .content-card { background: var(--white); padding: 35px; border-radius: 16px; margin-top: 30px; border: 1px solid #e2e8f0; }
         h2 { color: var(--primary); border-left: 5px solid var(--accent); padding-left: 15px; margin-bottom: 20px; }
         p, li { line-height: 1.8; color: #4a5568; }
@@ -55,38 +55,18 @@
         footer { text-align: center; padding: 60px 20px 150px; background: #1a202c; color: #a0aec0; margin-top: 50px; }
         footer a { color: #fff; text-decoration: none; margin: 0 10px; }
 
-        /* --- NEW CSS FOR POPUP & BLUR --- */
-        .hidden-content {
-            display: none !important;
-        }
+        /* --- NEW LOGIC CLASSES --- */
+        .hidden-element { display: none !important; }
 
-        /* यह क्लास तब लगेगी जब यूजर Info बटन दबाएगा */
-        .popup-overlay {
+        .glass-popup {
             display: block !important;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.85); /* सफ़ेद पारदर्शी बैकग्राउंड */
-            backdrop-filter: blur(12px); /* 🔥 BLUR EFFECT */
-            -webkit-backdrop-filter: blur(12px);
-            z-index: 2000;
-            overflow-y: auto;
-            padding: 80px 20px 20px 20px; /* हेडर के लिए ऊपर जगह */
-            box-sizing: border-box;
-            animation: fadeIn 0.3s ease-in-out;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            z-index: 2000; overflow-y: auto; padding: 80px 20px; box-sizing: border-box;
+            animation: fadeIn 0.3s ease;
         }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        /* मोबाइल पर Menu बटन को Adjust करना */
-        @media (max-width: 600px) {
-            #desktop-nav { display: none; }
-        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
@@ -94,12 +74,8 @@
     <header class="top-header">
         <div class="nav-container">
             <a href="/" class="logo">⚖️ Ask Lawyer</a>
-            
-            <button id="menu-btn" onclick="openPopup()" class="action-btn" style="display:none; margin-left: auto; border-color: var(--primary); color: var(--primary);">
-                ☰ View Info
-            </button>
-
-            <nav class="nav-links" id="desktop-nav">
+            <button id="view-info-btn" onclick="openPopup()" class="action-btn" style="display:none; margin-left: auto;">☰ View Info</button>
+            <nav class="nav-links" id="main-nav">
                 <a href="#about">About</a>
                 <a href="#services">Services</a>
                 <a href="#privacy">Privacy</a>
@@ -109,7 +85,11 @@
     </header>
 
     <div class="main-container">
-        
+        <section class="hero" id="hero-title">
+            <h1>Ask lawyer</h1>
+            <p>A lawyer in your pocket।</p>
+        </section>
+
         <div id="chat-box" class="chat-box">
             <div class="message ai-message">
                 स्वागत है! मैं <b>Ask Lawyer</b> हूँ। मैं आपको भारतीय कानूनों (BNS, IPC, Consumer Act) के बारे में जानकारी दे सकता हूँ और लीगल ड्राफ्ट तैयार करने में मदद कर सकता हूँ।<br><br>
@@ -118,17 +98,10 @@
         </div>
         <div id="typing" style="display:none; color: #718096; margin-bottom: 20px; font-style: italic;">Ask Lawyer is analyzing IPC/BNS sections...</div>
 
-        <div id="page-content">
+        <div id="extra-content-wrapper">
             
-            <button id="close-popup-btn" onclick="closePopup()" class="action-btn" style="display:none; float: right; margin-bottom: 20px; background: #c05621; color: white; border: none;">
-                ❌ Close Info
-            </button>
+            <button id="close-popup" onclick="closePopup()" class="action-btn" style="display:none; float: right; background: var(--accent); color: white; border: none; margin-bottom: 10px;">❌ Close</button>
             <div style="clear: both;"></div>
-
-            <section class="hero">
-                <h1>Ask lawyer</h1>
-                <p>a lawyer in your pocket।</p>
-            </section>
 
             <div class="content-card" id="services">
                 <h2>Our Legal Services</h2>
@@ -176,7 +149,7 @@
                 </p>
             </footer>
         </div>
-        </div>
+    </div>
 
     <div class="input-area">
         <div class="input-wrapper">
@@ -186,58 +159,31 @@
     </div>
 
 <script>
-    // --- POPUP LOGIC START ---
     function openPopup() {
-        const content = document.getElementById("page-content");
-        const closeBtn = document.getElementById("close-popup-btn");
-        
-        // Unhide content and apply Popup Class
-        content.classList.remove("hidden-content");
-        content.classList.add("popup-overlay");
-        
-        // Show Close Button
-        closeBtn.style.display = "block";
-        
-        // Prevent background scrolling
+        const wrapper = document.getElementById("extra-content-wrapper");
+        wrapper.classList.remove("hidden-element");
+        wrapper.classList.add("glass-popup");
+        document.getElementById("close-popup").style.display = "block";
         document.body.style.overflow = "hidden";
     }
 
     function closePopup() {
-        const content = document.getElementById("page-content");
-        const closeBtn = document.getElementById("close-popup-btn");
-
-        // Remove Popup Class and Hide Content again
-        content.classList.remove("popup-overlay");
-        content.classList.add("hidden-content");
-        
-        // Hide Close Button
-        closeBtn.style.display = "none";
-        
-        // Enable scrolling
+        const wrapper = document.getElementById("extra-content-wrapper");
+        wrapper.classList.remove("glass-popup");
+        wrapper.classList.add("hidden-element");
         document.body.style.overflow = "auto";
     }
-    // --- POPUP LOGIC END ---
 
     async function sendMessage() {
         const input = document.getElementById("user-input");
         const text = input.value.trim();
         if(!text) return;
 
-        // --- HIDE HOME CONTENT ON FIRST MESSAGE ---
-        const content = document.getElementById("page-content");
-        
-        // If content is not already hidden and not currently in popup mode
-        if (!content.classList.contains("hidden-content") && !content.classList.contains("popup-overlay")) {
-            content.classList.add("hidden-content");
-        }
-
-        // Show Toggle Button in Header
-        document.getElementById("menu-btn").style.display = "inline-block";
-        
-        // Optional: Hide default nav links to clean up header
-        const desktopNav = document.getElementById("desktop-nav");
-        if(desktopNav) desktopNav.style.display = "none";
-        // -------------------------------------------
+        // --- HIDE LOGIC ---
+        document.getElementById("hero-title").classList.add("hidden-element");
+        document.getElementById("extra-content-wrapper").classList.add("hidden-element");
+        document.getElementById("view-info-btn").style.display = "block";
+        document.getElementById("main-nav").style.display = "none";
 
         addMessage(text, "user-message");
         input.value = "";
@@ -263,49 +209,12 @@
         div.classList.add("message", className);
         if(className === 'ai-message') {
             div.innerHTML = marked.parse(text);
-            const isDraft = text.toLowerCase().includes('subject:') || text.toLowerCase().includes('to:');
-            if (isDraft) {
-                const actions = document.createElement("div");
-                actions.className = "message-actions";
-                const copy = document.createElement("button");
-                copy.className = "action-btn";
-                copy.innerHTML = "📋 Copy Draft";
-                copy.onclick = () => {
-                    let textToCopy = text;
-                    const startIndex = text.toLowerCase().indexOf("subject:");
-                    if (startIndex !== -1) { textToCopy = text.substring(startIndex).split('?')[0]; }
-                    navigator.clipboard.writeText(textToCopy);
-                    copy.innerHTML = "✅ Copied";
-                    setTimeout(() => copy.innerHTML = "📋 Copy Draft", 2000);
-                };
-                const pdf = document.createElement("button");
-                pdf.className = "action-btn";
-                pdf.innerHTML = "📄 PDF";
-                pdf.onclick = () => downloadPDF(text);
-                actions.appendChild(copy);
-                actions.appendChild(pdf);
-                div.appendChild(actions);
-            }
         } else { div.textContent = text; }
         document.getElementById("chat-box").appendChild(div);
         
-        // Scroll to the latest message, but avoid scrolling if popup is open
-        if(!document.getElementById("page-content").classList.contains("popup-overlay")) {
-             window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        if(!document.getElementById("extra-content-wrapper").classList.contains("glass-popup")) {
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
         }
-    }
-
-    async function downloadPDF(content) {
-        const res = await fetch('/generate_pdf', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ content })
-        });
-        const blob = await res.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url; a.download = 'AskLawyer_Draft.pdf';
-        a.click();
     }
 </script>
 </body>
