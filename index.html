@@ -2,91 +2,62 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pocket Lawyer - आपका कानूनी साथी</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pocket Lawyer</title>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         :root { --primary: #1a365d; --accent: #c05621; --bg: #f7fafc; }
-        body { font-family: system-ui; background: var(--bg); margin: 0; display: flex; flex-direction: column; min-height: 100vh; }
+        body { font-family: system-ui, sans-serif; background: var(--bg); margin: 0; padding-bottom: 100px; }
+        .top-header { background: white; border-bottom: 2px solid var(--primary); padding: 15px 20px; position: fixed; top: 0; width: 100%; z-index: 1000; font-weight: 800; color: var(--primary); }
+        .main-container { margin-top: 80px; padding: 20px; max-width: 800px; margin-inline: auto; }
+        .chat-box { display: flex; flex-direction: column; gap: 20px; }
+        .message { padding: 15px; border-radius: 12px; line-height: 1.6; background: white; border: 1px solid #e2e8f0; }
+        .user-message { align-self: flex-end; background: var(--primary); color: white; border-bottom-right-radius: 0; }
+        .ai-message { align-self: flex-start; border-bottom-left-radius: 0; width: 100%; }
         
-        .top-header { background: white; border-bottom: 2px solid var(--primary); padding: 15px 20px; position: fixed; top: 0; width: 100%; z-index: 1000; font-weight: 800; color: var(--primary); font-size: 1.4rem; }
-        
-        .main-container { margin-top: 80px; padding: 20px; padding-bottom: 160px; max-width: 800px; margin-inline: auto; width: 100%; }
-        
-        .chat-box { display: flex; flex-direction: column; gap: 15px; }
-        .message { max-width: 85%; padding: 12px 18px; border-radius: 15px; line-height: 1.6; }
-        .user-message { align-self: flex-end; background: var(--primary); color: white; border-bottom-right-radius: 2px; }
-        .ai-message { align-self: flex-start; background: white; border: 1px solid #e2e8f0; border-bottom-left-radius: 2px; }
-        
-        /* WHATSAPP BOUNCE */
-        .typing-indicator { display: none; margin: 10px 0; }
-        .dot { height: 8px; width: 8px; background: #cbd5e0; border-radius: 50%; display: inline-block; margin: 0 2px; animation: bounce 1.4s infinite ease-in-out both; }
-        .dot:nth-child(1) { animation-delay: -0.32s; }
-        .dot:nth-child(2) { animation-delay: -0.16s; }
-        @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
+        /* Action Box - Right Aligned */
+        .message-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px; padding-top: 10px; border-top: 1px solid #f1f5f9; }
+        .action-btn { background: #f8fafc; border: 1px solid #e2e8f0; padding: 6px 12px; border-radius: 6px; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 5px; }
+        .action-btn:hover { background: #edf2f7; color: var(--primary); }
 
-        .input-area { position: fixed; bottom: 0; left: 0; width: 100%; background: white; border-top: 1px solid #e2e8f0; padding: 15px 0; }
-        .input-wrapper { max-width: 800px; margin: 0 auto; display: flex; gap: 10px; width: 90%; }
-        input { flex: 1; padding: 14px; border-radius: 25px; border: 1px solid #cbd5e0; outline: none; }
-        button#send { background: var(--primary); color: white; border: none; width: 48px; height: 48px; border-radius: 50%; cursor: pointer; }
+        .input-area { position: fixed; bottom: 0; width: 100%; background: white; padding: 15px; border-top: 1px solid #e2e8f0; }
+        .input-wrapper { max-width: 800px; margin: 0 auto; display: flex; gap: 10px; }
+        input { flex: 1; padding: 12px 20px; border-radius: 25px; border: 1px solid #cbd5e0; outline: none; }
+        button#send { background: var(--primary); color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; }
         
-        .pdf-btn { background: var(--accent); color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; margin-top: 10px; display: block; }
+        .typing { display: none; font-size: 14px; color: #718096; margin: 10px 0; }
     </style>
 </head>
 <body>
-
     <header class="top-header">⚖️ Pocket Lawyer</header>
-
     <div class="main-container">
-        <div id="landing-page">
-            <h1 style="color: var(--primary);">नमस्ते, मैं हूँ Pocket Lawyer</h1>
-            <p>मैं भारतीय कानूनों को समझने और लीगल ड्राफ्ट बनाने में आपकी मदद करूँगा।</p>
-            <div style="background: white; padding: 15px; border-radius: 10px; border-left: 4px solid var(--accent); font-size: 0.9rem;">
-                <b>उदाहरण:</b> "मेरा Amazon रिफंड फँसा है", "FIR कैसे कराऊं?", "मकान मालिक नोटिस"
-            </div>
-        </div>
-
         <div id="chat-box" class="chat-box"></div>
-        <div id="typing-indicator" class="typing-indicator">
-            <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-        </div>
+        <div id="typing" class="typing">पॉकेट लॉयर सोच रहा है...</div>
     </div>
-
     <div class="input-area">
         <div class="input-wrapper">
-            <input type="text" id="user-input" placeholder="अपनी समस्या लिखें..." onkeypress="if(event.key==='Enter') sendMessage()">
+            <input type="text" id="user-input" placeholder="अपनी समस्या यहाँ लिखें..." onkeypress="if(event.key==='Enter') sendMessage()">
             <button id="send" onclick="sendMessage()">➤</button>
         </div>
     </div>
 
 <script>
-    const chatBox = document.getElementById("chat-box");
-    const landing = document.getElementById("landing-page");
-    const typing = document.getElementById("typing-indicator");
-
     async function sendMessage() {
         const input = document.getElementById("user-input");
         const text = input.value.trim();
         if(!text) return;
-
-        landing.style.display = "none";
         addMessage(text, "user-message");
         input.value = "";
-        typing.style.display = "block";
+        document.getElementById("typing").style.display = "block";
 
-        try {
-            const res = await fetch("/chat", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ message: text, session_id: "user123" })
-            });
-            const data = await res.json();
-            typing.style.display = "none";
-            addMessage(data.reply, "ai-message");
-        } catch(e) { 
-            typing.style.display = "none";
-            addMessage("Error connecting to server.", "ai-message");
-        }
+        const res = await fetch("/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message: text, session_id: "user1" })
+        });
+        const data = await res.json();
+        document.getElementById("typing").style.display = "none";
+        addMessage(data.reply, "ai-message");
     }
 
     function addMessage(text, className) {
@@ -95,17 +66,37 @@
         
         if(className === 'ai-message') {
             div.innerHTML = marked.parse(text);
-            // PDF Button for drafts
-            if(text.length > 100) {
-                const b = document.createElement("button");
-                b.className = "pdf-btn";
-                b.innerText = "📄 Download PDF";
-                b.onclick = () => downloadPDF(text);
-                div.appendChild(b);
+            
+            // Smart Check: Only show buttons for formal drafts/notices
+            const isDraft = text.toLowerCase().includes('subject:') || 
+                            text.toLowerCase().includes('to:') || 
+                            text.toLowerCase().includes('dear');
+
+            if (isDraft) {
+                const actions = document.createElement("div");
+                actions.className = "message-actions";
+                
+                const copy = document.createElement("button");
+                copy.className = "action-btn";
+                copy.innerHTML = "📋 Copy";
+                copy.onclick = () => {
+                    navigator.clipboard.writeText(text);
+                    copy.innerHTML = "✅ Copied";
+                    setTimeout(() => copy.innerHTML = "📋 Copy", 2000);
+                };
+
+                const pdf = document.createElement("button");
+                pdf.className = "action-btn";
+                pdf.innerHTML = "📄 PDF";
+                pdf.onclick = () => downloadPDF(text);
+
+                actions.appendChild(copy);
+                actions.appendChild(pdf);
+                div.appendChild(actions);
             }
         } else { div.textContent = text; }
 
-        chatBox.appendChild(div);
+        document.getElementById("chat-box").appendChild(div);
         window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
     }
 
@@ -118,7 +109,7 @@
         const blob = await res.blob();
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
-        a.href = url; a.download = 'Legal_Draft.pdf';
+        a.href = url; a.download = 'Pocket_Lawyer_Draft.pdf';
         a.click();
     }
 </script>
