@@ -21,7 +21,19 @@ def get_india_time():
     return datetime.now(pytz.timezone('Asia/Kolkata')).strftime("%I:%M %p, %d %b %Y")
 
 @app.route('/')
-def home(): return render_template('index.html')
+def home(): 
+    return render_template('index.html')
+
+# --- नया कोड यहाँ से शुरू ---
+@app.route('/privacy.html')
+def privacy(): 
+    return render_template('privacy.html')
+
+@app.route('/terms.html')
+def terms(): 
+    return render_template('terms.html')
+# --- नया कोड यहाँ ख़त्म ---
+    
 
 @app.route('/chat', methods=['POST'])
 def chat():
