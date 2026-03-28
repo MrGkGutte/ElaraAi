@@ -45,7 +45,7 @@ def chat():
     
     # System Prompt with Drafting Instruction
     system_prompt = f"""You are **Pocket Lawyer**. Created by Gahininath Gutte. 
-    Expert in Indian Law. Use 'Hinglish'. 
+    Expert in Indian Law. Use 'english marathi hindi '. do not write email if user is not promted just give info about query  
     IMPORTANT: When writing a formal notice or email, always start with 'Subject:' or 'To:' so the user can download it."""
     
     messages = [{"role": "system", "content": system_prompt}] + chat_memory[session_id][-6:] + [{"role": "user", "content": user_input}]
