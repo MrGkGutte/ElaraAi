@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en-IN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - Ask Lawyer</title>
+    
+    <meta name="description" content="Learn about the story behind Ask Lawyer and its creator, Gahininath Gutte. Discover our mission to provide free legal literacy to all Indians.">
+    <meta name="robots" content="index, follow"> 
+    
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700;900&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root { 
+            --primary: #1e293b; /* Deep Slate */
+            --primary-light: #334155;
+            --accent: #b68d40;  /* Muted Gold */
+            --bg: #f4f7f9;      /* Very Light Professional Gray/Blue */
+            --surface: #ffffff; /* Pure White */
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --border: #e2e8f0;
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            --shadow-lg: 0 20px 40px -10px rgba(0, 0, 0, 0.1);
+        }
+        
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background-color: var(--bg); 
+            background-image: radial-gradient(circle at top right, #ffffff 0%, transparent 40%);
+            color: var(--text-main); 
+            margin: 0; 
+            line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        
+        * { box-sizing: border-box; }
+
+        /* Navigation Matching Main Page */
+        .top-header { 
+            background: rgba(255, 255, 255, 0.95); 
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(226, 232, 240, 0.8); 
+            padding: 15px 20px; 
+            position: fixed; top: 0; width: 100%; z-index: 1000; 
+            box-shadow: var(--shadow-sm);
+        }
+        .nav-container { max-width: 1000px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .logo { 
+            font-family: 'Merriweather', serif;
+            font-weight: 900; color: var(--primary); font-size: 1.6rem; 
+            text-decoration: none; display: flex; align-items: center; gap: 10px;
+            letter-spacing: -0.5px;
+        }
+        .nav-links a { 
+            text-decoration: none; color: var(--text-muted); font-weight: 500; 
+            font-size: 14.5px; margin-left: 25px; transition: color 0.3s ease; 
+        }
+        .nav-links a:hover { color: var(--accent); }
+        @media (max-width: 600px) { .nav-links { display: none; } .logo { font-size: 1.4rem; } }
+
+        /* Main Content Container */
+        .main-wrapper {
+            margin-top: 100px;
+            padding: 20px;
+            flex: 1;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 0 auto;
+            padding: 50px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            box-shadow: var(--shadow-lg);
+        }
+        
+        h1, h2, h3 {
+            font-family: 'Merriweather', serif;
+            color: var(--primary); 
+        }
+
+        h1 { 
+            font-weight: 900;
+            border-bottom: 2px solid #f1f5f9; 
+            padding-bottom: 15px; 
+            margin-bottom: 25px;
+            font-size: 2.4rem;
+            letter-spacing: -0.5px;
+        }
+        
+        h2 { 
+            margin-top: 40px; 
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        h3 {
+            margin-top: 30px;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+        
+        p, li { 
+            color: var(--text-muted); 
+            margin-bottom: 18px; 
+            font-size: 1.05rem; 
+            line-height: 1.8;
+        }
+        
+        strong {
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        .back-btn { 
+            display: inline-flex;
+            align-items: center;
+            margin-bottom: 30px; 
+            padding: 10px 20px; 
+            background: #f8fafc; 
+            border: 1px solid var(--border); 
+            color: var(--primary); 
+            border-radius: 30px; 
+            text-decoration: none; 
+            font-weight: 500;
+            transition: all 0.3s ease; 
+            font-size: 0.9rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+        
+        .back-btn:hover { 
+            background: var(--primary); 
+            color: #ffffff;
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .story-divider { 
+            border: 0; 
+            height: 1px; 
+            background: var(--border); 
+            margin: 45px 0; 
+        }
+
+        /* Footer Matching Main Page */
+        footer { text-align: center; padding: 50px 20px; background: var(--primary); color: #cbd5e1; font-size: 0.95rem; margin-top: 40px; }
+        
+        .social-links { margin: 20px 0 35px 0; display: flex; justify-content: center; gap: 20px; }
+        .social-links a { 
+            display: flex; align-items: center; justify-content: center;
+            width: 45px; height: 45px; background: rgba(255,255,255,0.1); 
+            border-radius: 50%; transition: all 0.3s ease; 
+        }
+        .social-links a:hover { transform: translateY(-5px); background: var(--accent); }
+        .social-links svg { width: 20px; height: 20px; fill: #ffffff; transition: 0.3s; }
+
+        .built-by { font-weight: 400; color: #ffffff; margin: 15px 0; font-size: 1.05rem; letter-spacing: 0.5px; }
+        
+        footer p { margin-bottom: 10px; }
+        footer a { color: #ffffff; text-decoration: none; font-weight: 500; transition: color 0.3s ease; }
+        footer a:hover { color: var(--accent); }
+        
+        footer a.text-link { color: #94a3b8; text-decoration: none; margin: 0 12px; transition: 0.2s; font-size: 0.9rem; }
+        footer a.text-link:hover { color: #ffffff; }
+
+        @media (max-width: 600px) {
+            .container { padding: 30px 20px; }
+            h1 { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="top-header">
+        <div class="nav-container">
+            <a href="/" class="logo">⚖️ Ask Lawyer</a>
+            <nav class="nav-links">
+                <a href="/#how-it-works">How it Works</a>
+                <a href="/#services">Services</a>
+                <a href="about.html" style="color: var(--primary); font-weight: 600;">About</a>
+                <a href="#contact">Contact</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="main-wrapper">
+        <div class="container">
+            <a href="/" class="back-btn">← Back to Home</a>
+            
+            <h1>About Ask Lawyer</h1>
+            
+            <p>Hi there! I’m <strong>Gahininath Gutte</strong>, the creator and developer behind Ask Lawyer. Welcome to my socio-legal platform.</p>
+
+            <h2>Why I Built Ask Lawyer</h2>
+            <p>I noticed a significant gap in legal literacy across both rural and urban India. Many individuals hesitate to seek legal help due to the fear of exorbitant consultation fees or the intimidation of complex court procedures. Often, people just need a simple answer to a legal problem or a basic format for a complaint, but traditional search engines make it difficult to find accurate, jargon-free legal information.</p>
+            <p>I wanted to create a tool that serves as a "First Line of Defense" for the common citizen. My goal was to build a highly optimized, intelligent AI assistant that understands Indian Law and helps you navigate your legal rights effortlessly.</p>
+
+            <h2>The Technology</h2>
+            <p>To ensure Ask Lawyer is fast and reliable, I integrated it with powerful, industry-leading technologies. It leverages advanced Large Language Models (LLMs) to process natural language (even Roman Hindi) and instantly analyze updated Indian laws, including the new Bharatiya Nyaya Sanhita (BNS) and the Consumer Protection Act. This allows the AI to provide clear guidance and generate foundational legal drafts in real-time.</p>
+
+            <h2>My Mission</h2>
+            <p>I strongly believe that knowing your legal rights shouldn't be a privilege reserved for the wealthy. My core mission is summarized simply: <strong>"Legal Literacy for All."</strong> I aim to keep this initial guidance free and accessible, empowering citizens to understand their fundamental rights and take informed legal steps.</p>
+
+            <hr class="story-divider">
+
+            <h2>From a 12th-Pass Arts Student to Building Ask Lawyer: My Solo Developer Journey</h2>
+            
+            <p>If you had told me a few years ago that I would build an Artificial Intelligence web assistant capable of generating legal drafts and explaining complex laws, I probably would have laughed. You see, I don't have a fancy Computer Science degree or a Law degree from a top university. In fact, I am a 12th-pass Arts student. But what I do have is an internet connection, a passion for learning, and a deep desire to solve real-world problems.</p>
+
+            <h3>Breaking the Tech Myth</h3>
+            <p>There is a huge misconception that to build complex software or work with AI, you need a background in science or math. I wanted to prove that wrong. The internet has democratized education. Everything I needed to know about coding, APIs, LLMs, and web development was out there for free. I just had to sit down, stay consistent, and learn it.</p>
+
+            <h3>The Real Struggle Behind the Screen</h3>
+            <p>I will be completely honest—building a scalable AI platform on a zero budget is incredibly challenging for a self-taught solo developer. I had to learn what an API was, how cloud servers worked, and how to optimize every single line of code so it wouldn't crash when users asked complex legal questions.</p>
+            <p>Every feature you see on this website—from the clean user interface to the fast AI response times—was coded, tested, and fixed by me, alone in my room.</p>
+
+            <h3>More Than Just Code</h3>
+            <p>Ask Lawyer isn't just a project for me; it is a message. It is proof that your background does not define your future. Whether you are an Arts student, a dropout, or someone from a small village—if you have the willpower, you can build technology that makes a positive impact on society.</p>
+            
+            <p>Your support means the world to a solo developer like me. If you find a bug, please forgive me, I am probably already working on fixing it!</p>
+
+        </div>
+    </div>
+
+    <footer id="contact">
+        <div class="social-links">
+            <a href="https://www.linkedin.com/in/gahininath-gutte-9808613b4/" target="_blank" aria-label="LinkedIn">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+            </a>
+            <a href="https://twitter.com/gk_gutte143" target="_blank" aria-label="Twitter">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg>
+            </a>
+            <a href="https://www.instagram.com/gk_gutte143" target="_blank" aria-label="Instagram">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.20 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+            </a>
+        </div>
+
+        <p class="built-by">Built with ❤️ by Gahininath Gutte</p>
+        
+        <p>Contact: <a href="mailto:gkgutte143@yahoo.in">gkgutte143@yahoo.in</a></p>
+        <p>© 2026 Ask Lawyer | All Rights Reserved.</p>
+        
+        <p style="margin-top: 25px;">
+            <a href="/" class="text-link">Home</a> | 
+            <a href="about.html" class="text-link">About Us</a> | 
+            <a href="/privacy.html" class="text-link">Privacy Policy</a> | 
+            <a href="/terms.html" class="text-link">Terms of Service</a>
+        </p>
+    </footer>
+
+</body>
+</html>
