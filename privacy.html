@@ -6,53 +6,60 @@
     <title>Privacy Policy - Ask Lawyer</title>
     <meta name="robots" content="noindex, follow"> 
     
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700;900&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     
     <style>
         :root { 
             --primary: #1e293b; /* Deep Slate */
+            --primary-light: #334155;
             --accent: #b68d40;  /* Muted Gold */
-            --bg: #f8fafc;      /* Very Light Blue/Gray */
+            --bg: #f4f7f9;      /* Very Light Professional Gray/Blue */
             --surface: #ffffff; /* Pure White */
             --text-main: #0f172a;
-            --text-muted: #64748b;
+            --text-muted: #475569;
             --border: #e2e8f0;
-            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            --shadow-lg: 0 20px 40px -10px rgba(0, 0, 0, 0.1);
         }
         
         body { 
-            font-family: 'Inter', system-ui, sans-serif; 
-            background: var(--bg); 
+            font-family: 'Poppins', sans-serif; 
+            background-color: var(--bg); 
+            background-image: radial-gradient(circle at top right, #ffffff 0%, transparent 40%);
             color: var(--text-main); 
             margin: 0; 
-            padding: 20px; 
+            padding: 40px 20px; 
             line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
         }
         
         .container {
             max-width: 850px;
-            margin: 40px auto;
-            padding: 40px;
+            margin: 0 auto;
+            padding: 50px;
             background: var(--surface);
             border: 1px solid var(--border);
             border-radius: 20px;
-            box-shadow: var(--shadow);
+            box-shadow: var(--shadow-lg);
         }
         
-        h1 { 
-            font-family: 'Playfair Display', serif;
+        h1, h2 {
+            font-family: 'Merriweather', serif;
             color: var(--primary); 
-            border-bottom: 2px solid var(--border); 
+            font-weight: 700;
+        }
+
+        h1 { 
+            border-bottom: 2px solid #f1f5f9; 
             padding-bottom: 15px; 
             margin-bottom: 25px;
             font-size: 2.2rem;
+            letter-spacing: -0.5px;
         }
         
         h2 { 
-            font-family: 'Playfair Display', serif;
-            color: var(--primary); 
-            margin-top: 35px; 
-            font-size: 1.5rem;
+            margin-top: 40px; 
+            font-size: 1.4rem;
         }
         
         p, li { 
@@ -62,11 +69,12 @@
         }
         
         strong {
-            color: var(--text-main);
+            color: var(--primary);
+            font-weight: 600;
         }
         
         ul { 
-            margin-bottom: 20px; 
+            margin-bottom: 25px; 
             padding-left: 20px; 
         }
         
@@ -74,69 +82,85 @@
             color: var(--primary); 
             text-decoration: none; 
             font-weight: 500;
-            transition: 0.2s;
+            transition: all 0.3s ease;
         }
         
         a:hover { 
             color: var(--accent); 
-            text-decoration: underline; 
         }
         
         .back-btn { 
-            display: inline-block; 
-            margin-bottom: 25px; 
-            padding: 10px 18px; 
-            background: #f1f5f9; 
+            display: inline-flex;
+            align-items: center;
+            margin-bottom: 30px; 
+            padding: 10px 20px; 
+            background: #f8fafc; 
             border: 1px solid var(--border); 
             color: var(--primary); 
-            border-radius: 50px; 
+            border-radius: 30px; 
             text-decoration: none; 
             font-weight: 500;
-            transition: 0.3s; 
+            transition: all 0.3s ease; 
             font-size: 0.9rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
         }
         
         .back-btn:hover { 
             background: var(--primary); 
             color: #ffffff;
             border-color: var(--primary);
-            text-decoration: none;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
         }
 
-        /* Social Media Icons Style */
+        /* Premium Contact Box matching Main Page */
         .contact-box {
             background: #f8fafc;
-            padding: 20px;
-            border-radius: 12px;
+            padding: 25px 30px;
+            border-radius: 16px;
             border: 1px solid var(--border);
-            margin-top: 15px;
+            margin-top: 30px;
         }
 
         .social-links { 
             display: flex; 
             align-items: center;
             gap: 15px; 
-            margin: 10px 0;
+            margin: 15px 0;
         }
         
+        /* Updated Social Icons to match the premium circular look */
         .social-links a { 
-            display: inline-block; 
-            transition: 0.3s; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            width: 42px; 
+            height: 42px; 
+            background: #e2e8f0; 
+            border-radius: 50%; 
+            transition: all 0.3s ease; 
         }
         
         .social-links a:hover { 
-            transform: translateY(-3px); 
+            transform: translateY(-4px); 
+            background: var(--accent);
+            box-shadow: var(--shadow-sm);
         }
         
         .social-links svg { 
-            width: 22px; 
-            height: 22px; 
+            width: 20px; 
+            height: 20px; 
             fill: var(--primary); 
             transition: 0.3s; 
         }
         
         .social-links a:hover svg { 
-            fill: var(--accent); 
+            fill: #ffffff; 
+        }
+        
+        @media (max-width: 600px) {
+            .container { padding: 30px 20px; }
+            h1 { font-size: 1.8rem; }
         }
     </style>
 </head>
