@@ -32,6 +32,10 @@ def privacy():
 @app.route('/terms.html')
 def terms(): 
     return render_template('terms.html')
+
+@app.route('/about.html')
+def about(): 
+    return render_template('about.html')
 # --- नया कोड यहाँ ख़त्म ---
     
 
